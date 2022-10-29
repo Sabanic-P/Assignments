@@ -1,19 +1,19 @@
-CARGS = -O3 -lpthread -lrt
-
+CARGS = -O3 
+LINKARGS = -lpthread -lrt
 .alloc.o: alloc.c
-	@$(CC) $(CARGS) -c alloc.c -o alloc.o 
+	@$(CC) $(CARGS) -c alloc.c $(LINKARGS)-o alloc.o 
 
 .server: server.c
-	@$(CC) $(CARGS) server.c -o server
+	@$(CC) $(CARGS) server.c $(LINKARGS) -o server
 
 .client: client.c
-	@$(CC) $(CARGS) client.c -o client
+	@$(CC) $(CARGS) client.c $(LINKARGS) -o client
 
 .server-alloc: server.c
-	@$(CC) $(CARGS) -DUSECUSTOMMALLOC server.c alloc.o -o server-alloc
+	@$(CC) $(CARGS) -DUSECUSTOMMALLOC server.c alloc.o $(LINKARGS) -o server-alloc
 
 .client-alloc: client.c
-	@$(CC) $(CARGS) -DUSECUSTOMMALLOC client.c alloc.o -o client-alloc
+	@$(CC) $(CARGS) -DUSECUSTOMMALLOC client.c alloc.o $(LINKARGS) -o client-alloc
 
 all: .alloc.o .server .server-alloc .client-alloc
 
