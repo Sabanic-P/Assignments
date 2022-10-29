@@ -281,6 +281,8 @@ int main(int argc, char **argv)
     }
     table = create_hashtable(table_size);
     int s = shm_open("shared-mem", O_RDWR | O_CREAT, 0777);
+    shm_unlink("shared-mem");
+    s = shm_open("shared-mem", O_RDWR | O_CREAT, 0777);
     int size = (sizeof(exchange_t)) * CLIENT_SLOTS;
 
     ftruncate(s, size);
