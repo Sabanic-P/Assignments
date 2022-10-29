@@ -17,11 +17,11 @@ CARGS = -O3
 
 all: .alloc.o .server .server-alloc .client-alloc
 
-test-alloc: .client-alloc .server-alloc
+test-alloc: .alloc.o .client-alloc .server-alloc 
 	@echo "Using custom malloc and free"
 	time ./run.sh "./server-alloc" "./client-alloc"
 
-test-default: .server .client
+test-default: .alloc.o .server .client alloc.c
 	@echo "Using default malloc and free"
 	time ./run.sh "./server" "./client"
 

@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <byteswap.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "alloc.h"
 
 typedef struct memory_block
@@ -28,7 +29,7 @@ void *_malloc(size_t size)
     if (mem_start.start_address == NULL)
     {
         void *start = sbrk(0);
-        if(start == -1){
+        if(start == (void*)-1){
             pthread_mutex_unlock(&memory_lock);
             return NULL;
         }
@@ -47,7 +48,7 @@ void *_malloc(size_t size)
 
             /*Increase/Decrease first block to new size*/
             void* test = sbrk(size - mem_start.size);
-            if(test == -1){
+            if(test == (void*)-1){
                 pthread_mutex_unlock(&memory_lock);
                 return NULL;
             }
@@ -122,7 +123,7 @@ void *_malloc(size_t size)
     if (m->free)
     {
         void* test = sbrk(size - m->size);
-        if(test == -1){
+        if(test == (void*)-1){
             pthread_mutex_unlock(&memory_lock);
             return NULL;
         }
@@ -134,7 +135,7 @@ void *_malloc(size_t size)
 
     /*New block needs to be appended*/
     memory_block_t *new_block = sbrk(size + sizeof(memory_block_t));
-    if(new_block == -1){
+    if(new_block == (void*)-1){
         pthread_mutex_unlock(&memory_lock);
         return NULL;
     }
@@ -180,16 +181,12 @@ void _free(void *ptr)
         {
             if (m->start_address + sizeof(memory_block_t) == ptr)
             {
-                if(!m->free){
-                    fprintf(stderr,"Double free\n");
-                    exit(-1);
-                }
                 m->free = true;
                 found = true;
                 break;
             }
         }
-        if(found){
+        if(!found){
             fprintf(stderr,"Invalid Pointer\n");
             exit(-1);
         }
