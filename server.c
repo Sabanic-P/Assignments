@@ -203,7 +203,7 @@ void init_memory_region(m_t *r, size_t size)
 */
 void *serve_function(void *args)
 {
-    uint64_t id = (uint64_t)args;
+    size_t id = (size_t)args;
     pthread_mutex_t *cond_mutex = &memory->c_slots[id].cond_mutex;
     pthread_cond_t *cond = &memory->c_slots[id].cond;
     exchange_t *e = &memory->c_slots[id];
@@ -222,24 +222,25 @@ void *serve_function(void *args)
                 return NULL;
             }
         }
-
+        void *data;
+        entry_t entry;
         switch (e->type)
         {
         case REQUEST_INSERT:
-            void *data = malloc(e->length);
+            data = malloc(e->length);
             memcpy(data, e->data, e->length);
             insert(table, e->key, data, e->length);
             break;
 
         case REQUEST_DELETE:
-            void *tmp = delete (table, e->key);
-            if (tmp == NULL)
+            data = delete (table, e->key);
+            if (data == NULL)
                 fprintf(stderr, "Element not found %d %d\n", e->key, id);
-            free(tmp);
+            free(data);
             break;
 
         case REQUEST_READ:
-            entry_t entry = read_table(table, e->key);
+            entry = read_table(table, e->key);
             memcpy(e->data, entry.obj, entry.obj_length);
             free(entry.obj);
             e->length = entry.obj_length;
@@ -298,7 +299,7 @@ int main(int argc, char **argv)
     pthread_t t[CLIENT_SLOTS];
 
     for (uint64_t i = 0; i < CLIENT_SLOTS; i++)
-        pthread_create(&t[i], NULL, serve_function, (void *)i);
+        pthread_create(&t[i], NULL, serve_function, (size_t*)i);
 
     for (uint64_t i = 0; i < CLIENT_SLOTS; i++)
         pthread_join(t[i], NULL);
