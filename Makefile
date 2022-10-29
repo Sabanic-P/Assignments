@@ -1,7 +1,7 @@
 CARGS = -O3 
 LINKARGS = -lpthread -lrt
 .alloc.o: alloc.c
-	@$(CC) $(CARGS) -c alloc.c $(LINKARGS)-o alloc.o 
+	@$(CC) $(CARGS) -c alloc.c $(LINKARGS) -o alloc.o 
 
 .server: server.c
 	@$(CC) $(CARGS) server.c $(LINKARGS) -o server

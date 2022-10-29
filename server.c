@@ -203,7 +203,7 @@ void init_memory_region(m_t *r, size_t size)
 */
 void *serve_function(void *args)
 {
-    uint64_t id = (uintptr_t)args;
+    uint32_t id = (uintptr_t)args;
     pthread_mutex_t *cond_mutex = &memory->c_slots[id].cond_mutex;
     pthread_cond_t *cond = &memory->c_slots[id].cond;
     exchange_t *e = &memory->c_slots[id];
@@ -298,10 +298,10 @@ int main(int argc, char **argv)
 
     pthread_t t[CLIENT_SLOTS];
 
-    for (uint64_t i = 0; i < CLIENT_SLOTS; i++)
+    for (uint32_t i = 0; i < CLIENT_SLOTS; i++)
         pthread_create(&t[i], NULL, serve_function, (void*)((uintptr_t)i));
 
-    for (uint64_t i = 0; i < CLIENT_SLOTS; i++)
+    for (uint32_t i = 0; i < CLIENT_SLOTS; i++)
         pthread_join(t[i], NULL);
 
     for (int i = 0; i < CLIENT_SLOTS; i++)
