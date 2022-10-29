@@ -1,4 +1,4 @@
-CARGS = -O3
+CARGS = -O3 -lpthread -lrt
 
 .alloc.o: alloc.c
 	@$(CC) $(CARGS) -c alloc.c -o alloc.o 
